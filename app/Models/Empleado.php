@@ -19,6 +19,7 @@ class Empleado extends Model
         'direccion',
         
     ];
+    //las clave foranea las tienen el hijo que apunta al padre
 
     public function datosLaborales()
     {
@@ -43,7 +44,7 @@ class Empleado extends Model
         return $this->hasMany(Licencia::class);
     }
 
-    public function nominas(){
-        return $this->hasOne(Nomina::class);
+    public function nominas(){//un empleado pertenece a una nomina
+        return $this->belongsTo(Nomina::class);
     }
 }

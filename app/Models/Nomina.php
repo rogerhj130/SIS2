@@ -11,7 +11,18 @@ class Nomina extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'empleado_id',
+        'diasTrabajados',
+        'bonoAntiguedad',
+        'totalGanado',
+        'afp',
+        'descuento',
+        'liquidoPagable',
+    ];
+
     public function empleado(){
-        return $this->belongsTo(Empleado::class);
+
+         return $this->belongsTo(Empleado::class);
     }
 }

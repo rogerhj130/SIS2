@@ -48,6 +48,8 @@ Route::prefix('nomina')->group(function () {
     Route::get('/calcular', [NominaController::class, 'calcular'])->name('nomina.calcular'); // Calcular sueldos
     Route::post('/generar', [NominaController::class, 'generar'])->name('nomina.generar'); // Generar nóminas
     Route::get('/historial', [NominaController::class, 'historial'])->name('nomina.historial'); // Historial de pagos
+    Route::post('/generarBoleta/{empleado}', [NominaController::class, 'generarBoleta'])->name('nomina.generarBoleta');
+    Route::get('/boleta/{nomina}', [NominaController::class, 'boleta'])->name('nomina.boleta');
 });
 
 

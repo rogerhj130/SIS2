@@ -9,93 +9,112 @@ use Carbon\Carbon;
 
 class NominaController extends Controller
 {
+   
     public function calcular()
-{
-    // Obtenemos los empleados que tienen menos de 30 días trabajados
-    $empleados = Empleado::whereHas('asistencias', function($query) {
-        $query->havingRaw('COUNT(*) < 30');
-    }, '>=', 1)->get();
+    {
+        // Obtenemos los empleados que tienen menos de 30 días trabajados
+        $empleados = Empleado::withCount('asistencias')
+            ->having('asistencias_count', '<', 30)
+            ->get();
 
-    // Calculamos y asignamos los atributos adicionales a cada empleado
-    foreach ($empleados as $empleado) {
-        // Obtenemos los datos laborales del empleado
+        // Calculamos y asignamos los atributos adicionales a cada empleado
+        foreach ($empleados as $empleado) {
+            
+            // Obtenemos los datos laborales del empleado
+            $datosLaborales = $empleado->datosLaborales;
+
+            // Validamos que existan datos laborales para el empleado
+            if ($datosLaborales) {
+                // guardando el sueldo
+                $sueldo = $datosLaborales->salario;
+
+                // Calculo de los años de antigüedad
+                $antiguedad = Carbon::parse($datosLaborales->fechaContratacion)->diffInYears(Carbon::now());
+
+                // Haciendo el cálculo del bono de antigüedad
+                if($antiguedad >= 1){
+                    $bonoAntiguedad = $sueldo * 0.05 * $antiguedad;
+                } else {
+                    $bonoAntiguedad = 0;
+                }
+
+                // Calculo del descuento AFP
+                $descuentoAFP = $sueldo * 0.1271;
+
+                // Calcular total ganado
+                $totalGanado = $sueldo + $bonoAntiguedad; 
+
+                // Calcular líquido pagable
+                $liquidoPagable = $totalGanado - $descuentoAFP;
+
+                // Asignar estos valores al objeto Empleado
+                $empleado->diasTrabajados = $empleado->asistencias_count;
+                $empleado->bonoAntiguedad = $bonoAntiguedad;
+                $empleado->sueldo = $sueldo;
+                $empleado->totalGanado = $totalGanado;
+                $empleado->afp = $descuentoAFP;
+                $empleado->descuento = $descuentoAFP;
+
+                $empleado->liquidoPagable = $liquidoPagable;
+            }
+        }
+
+        return view('nomina.index', compact('empleados'));
+    }
+
+    public function generarBoleta(Request $request, $empleado_id)
+    {
+        $empleado = Empleado::withCount('asistencias')->findOrFail($empleado_id);
         $datosLaborales = $empleado->datosLaborales;
 
-        // Validamos que existan datos laborales para el empleado
         if ($datosLaborales) {
             // Calcular el sueldo
             $sueldo = $datosLaborales->salario;
 
-            // Simular bono de antigüedad (ejemplo: 5% del salario por cada año trabajado)
-            $antiguedad = Carbon::parse($empleado->fechaContratacion)->diffInYears(Carbon::now());
-            $bonoAntiguedad = $sueldo * ($antiguedad * 0.1);
+            // Calculo de los años de antigüedad
+            $antiguedad = Carbon::parse($datosLaborales->fechaContratacion)->diffInYears(Carbon::now());
 
-            //ingresos y descuentos
-            $otrosIngresos = 500; //bono adicional
-            $descuentoAFP = $sueldo * 0.1; //descuento AFP
+            //lo toma en cuenta si tiene mas de un año de antiguedad si no va a ser 0 por defecto
+            if($antiguedad >= 1){
+                $bonoAntiguedad = $sueldo * 0.05 * $antiguedad;
+            } else {
+                $bonoAntiguedad = 0;
+            }
+
+
+            // Calculo del descuento AFP
+            $descuentoAFP = $sueldo * 0.1271;
 
             // Calcular total ganado
-            $totalGanado = $sueldo + $bonoAntiguedad + $otrosIngresos;
+            $totalGanado = $sueldo + $bonoAntiguedad;
 
-            // Calcular descuentos
-            $descuento = $descuentoAFP;
+            // Obtener el descuento del formulario, asegurando que no sea nulo
+            $descuento = $request->input('descuento', 0);
 
             // Calcular líquido pagable
-            $liquidoPagable = $totalGanado - $descuento;
+            $liquidoPagable = $totalGanado - $descuento - $descuentoAFP;
 
-            // Asignar estos valores al objeto Empleado
-            $empleado->sueldo = $sueldo;
-            $empleado->bonoAntiguedad = $bonoAntiguedad;
-            $empleado->totalGanado = $totalGanado;
-            $empleado->afp = $descuentoAFP;
-            $empleado->descuento = $descuento;
-            $empleado->liquidoPagable = $liquidoPagable;
-        }
-    }
-
-    return view('nomina.index', compact('empleados'));
-}
-
-    
-
-
-    public function generar(Request $request)
-    {
-        // Lógica para calcular sueldos, deducciones y generar nóminas
-        // Guarda las nóminas generadas en la base de datos
-        foreach ($request->empleados as $empleado_id) {
-            $empleado = Empleado::find($empleado_id);
-            $sueldos = $this->calcularSueldo($empleado);
-
-            Nomina::create([
+            // Guardar en la tabla de nóminas
+            $nomina = Nomina::create([
                 'empleado_id' => $empleado->id,
-                'sueldo' => $sueldos['sueldo'],
-                'deducciones' => $sueldos['deducciones'],
-                'neto' => $sueldos['neto'],
-                'mes' => now()->format('Y-m'),
+                'diasTrabajados' => $empleado->asistencias_count,
+                'bonoAntiguedad' => $bonoAntiguedad,
+                'totalGanado' => $totalGanado,
+                'afp' => $descuentoAFP,
+                'descuento' => $descuento,
+                'liquidoPagable' => $liquidoPagable,
             ]);
+
+            return redirect()->route('nomina.boleta', ['nomina' => $nomina->id])
+                ->with('success', 'Boleta de pago generada correctamente');
         }
 
-        return redirect()->route('nomina.historial')->with('success', 'Nóminas generadas correctamente');
+        return redirect()->back()->with('error', 'No se pudo generar la boleta de pago');
     }
 
-    public function historial()
+    public function boleta($nomina_id)
     {
-       /*  $nominas = Nomina::orderBy('mes', 'desc')->get(); */
-        return view('nomina.historial'/* , compact('nominas') */);
-    }
-
-    private function calcularSueldo($empleado)
-    {
-        // Lógica para calcular el sueldo, deducciones y neto
-        $sueldo = $empleado->salario;
-        $deducciones = 0; // Aquí agregamos la lógica de deducciones por faltas y licencias
-        $neto = $sueldo - $deducciones;
-
-        return [
-            'sueldo' => $sueldo,
-            'deducciones' => $deducciones,
-            'neto' => $neto,
-        ];
+        $nomina = Nomina::with('empleado')->findOrFail($nomina_id);
+        return view('nomina.boleta', compact('nomina'));
     }
 }
