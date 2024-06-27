@@ -76,12 +76,9 @@ class EmpleadoController extends Controller
         return view('empleados.index', compact('empleados')); // Pasar $empleados a la vista
     }
 
-
-    public function historial($id)
+    public function show($id)
     {
-        $empleado = Empleado::findOrFail($id);
-        $historial = $empleado->historial;
-
-        return view('empleados.historial', compact('empleado', 'historial'));
+        $empleado = Empleado::with('datosLaborales', 'contactosEmergencia')->findOrFail($id);
+        return view('empleados.show', compact('empleado'));
     }
 }

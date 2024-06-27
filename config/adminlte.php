@@ -215,7 +215,7 @@ return [
     */
 
     'sidebar_mini' => 'lg',
-    'sidebar_collapse' => true,
+    'sidebar_collapse' => false,
     'sidebar_collapse_auto_size' => false,
     'sidebar_collapse_remember' => false,
     'sidebar_collapse_remember_no_transition' => true,
@@ -302,22 +302,9 @@ return [
         //boton 1
         [
             'text' => 'GESTION EMPLEADOS',
+            'url' => 'empleados',
             'icon' => 'fas fa-users',
-            
-            'submenu' => [
-                [
-                    'text' => 'Registrar empleados',
-                    'url' => 'empleados/create',
-                    'icon' => 'fas fa-user-plus',
-                ],
-                [
-                    'text' => 'Empleados',
-                    'url' => 'empleados',
-                    'icon' => 'fas fa-address-book',
-                ],
-                
-            ]
- 
+    
         ],
         // boton 2
         [
@@ -339,36 +326,16 @@ return [
         //boton 3
         [
             'text' => 'GESTION DE LICENCIAS',
+            'url' => 'licencias',
             'icon' => 'fas fa-calendar-check',
-            'submenu' => [
-                [
-                    'text' => 'Registrar Licencia',
-                    'url' => 'licencias/create',
-                    'icon' => 'fas fa-user-check',
-                ],
-                [
-                    'text' => 'Ver Licencias',
-                    'url' => 'licencias',
-                    'icon' => 'fas fa-list',
-                ],
-            ],
+            
         ],
        //boton 4
         [
             'text' => 'NOMINA',
+            'url' => 'nomina/calcular',
             'icon' => 'fas fa-money-check-alt',
-            'submenu' => [
-                [
-                    'text' => 'Calcular sueldos',
-                    'url' => 'nomina/calcular',
-                    'icon' => 'fas fa-calculator',
-                ],
-                [
-                    'text' => 'Historial de pagos',
-                    'url' => 'nomina/historial',
-                    'icon' => 'fas fa-history',
-                ],
-            ],
+            
         ],
 
         

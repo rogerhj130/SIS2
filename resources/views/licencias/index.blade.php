@@ -3,7 +3,9 @@
 @section('title', 'Ver Licencias')
 
 @section('content_header')
-    <h1>Lista de licencias</h1>
+    <div class="bg-light p-3">
+        <h1 class="text-center"><strong>Lista de licencias</strong></h1>
+    </div>
 @stop
 
 @section('content')
@@ -53,6 +55,9 @@
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Lista de Licencias</h3>
+            <div class="form-group col-md-12 text-right">
+                <button type="submit" class="btn btn-success" onclick="location.href='licencias/create'">Nueva licencia</button>
+            </div>
         </div>
         <div class="card-body">
             <table class="table table-bordered">

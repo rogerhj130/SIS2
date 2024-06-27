@@ -30,11 +30,6 @@ class Empleado extends Model
     {
         return $this->hasOne(ContactosEmergencia::class);
     }
-
-    public function historial()//creo que deberia de ser hasOne
-    {
-        return $this->hasMany(Historial::class);
-    }
     
     public function asistencias(){
         return $this->hasMany(Asistencia::class);

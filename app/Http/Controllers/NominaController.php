@@ -68,7 +68,7 @@ class NominaController extends Controller
         $datosLaborales = $empleado->datosLaborales;
 
         if ($datosLaborales) {
-            // Calcular el sueldo
+            // guarda el sueldo
             $sueldo = $datosLaborales->salario;
 
             // Calculo de los años de antigüedad
@@ -82,7 +82,7 @@ class NominaController extends Controller
             }
 
 
-            // Calculo del descuento AFP
+            // descuento AFP de la afp
             $descuentoAFP = $sueldo * 0.1271;
 
             // Calcular total ganado
@@ -91,7 +91,7 @@ class NominaController extends Controller
             // Obtener el descuento del formulario, asegurando que no sea nulo
             $descuento = $request->input('descuento', 0);
 
-            // Calcular líquido pagable
+            //líquido pagable
             $liquidoPagable = $totalGanado - $descuento - $descuentoAFP;
 
             // Guardar en la tabla de nóminas

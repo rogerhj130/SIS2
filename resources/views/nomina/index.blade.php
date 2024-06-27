@@ -3,7 +3,9 @@
 @section('title', 'Nómina')
 
 @section('content_header')
-    <h1 class="text-center">Nómina</h1>
+    <div class="bg-light p-3">
+        <h1 class="text-center"><strong>Nomina</strong></h1>
+    </div>
 @stop
 
 @section('content')
@@ -23,7 +25,7 @@
                         <th>Total Ganado</th>
                         <th>AFP</th>
                         <th>Líquido Pagable</th>
-                        <th>Acción</th>
+                        <th>Boleta de Pago</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,19 +33,19 @@
                         <tr>
                             <td>{{ $empleado->ci }}</td>
                             <td>{{ $empleado->nombreCompleto }}</td>
-                            <td>{{ $empleado->sueldo }}</td>
+                            <td>{{ $empleado->sueldo }} Bs</td>
                             <td>{{ $empleado->diasTrabajados ?? 0 }}</td>
-                            <td>{{ number_format($empleado->bonoAntiguedad ?? 0, 2) }}</td>
-                            <td>{{ number_format($empleado->totalGanado ?? 0, 2) }}</td>
-                            <td>{{ number_format($empleado->afp ?? 0, 2) }}</td>
-                            <td>{{ number_format($empleado->liquidoPagable ?? 0, 2) }}</td>
+                            <td>{{ number_format($empleado->bonoAntiguedad ?? 0, 2) }} Bs</td>
+                            <td>{{ number_format($empleado->totalGanado ?? 0, 2) }} Bs</td>
+                            <td>{{ number_format($empleado->afp ?? 0, 2) }} Bs</td>
+                            <td>{{ number_format($empleado->liquidoPagable ?? 0, 2) }} Bs</td>
                             <td>
                                 <form action="{{ route('nomina.generarBoleta', $empleado->id) }}" method="POST">
                                     @csrf
                                     <div class="form-group">
-                                        <input type="number" name="descuento" class="form-control col-md-7" placeholder="Descuento" step="0.01" required>
+                                        <input type="number" name="descuento" class="form-control col-md-9" placeholder="Descuento" step="0.01" required>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Boleta de Pago</button>
+                                    <button type="submit" class="btn btn-primary">Generar boleta</button>
                                 </form>
                             </td>
                         </tr>

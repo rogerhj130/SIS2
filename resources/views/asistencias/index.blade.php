@@ -3,21 +3,25 @@
 @section('title', 'Ver Asistencia')
 
 @section('content_header')
-    <h1>Ver Asistencia</h1>
+    <div class="bg-light p-3">
+        <h1 class="text-center"><strong>Asistencias</strong></h1>
+    </div>
 @stop
 
 @section('content')
-    <form action="{{ route('asistencias.index') }}" method="GET" class="form-inline mb-3">{{-- hice cambios solo aqi --}}
-        <div class="form-group">
+    <form action="{{ route('asistencias.index') }}" method="GET" class="form-inline mb-3">
+        <div class="form-group mr-4">
             <label for="ci" class="mr-2">Número de Carnet:</label>
-            <input type="text" name="ci" id="ci" class="form-control mr-2" value="{{ request('ci') }}">
+            <input type="text" name="ci" id="ci" class="form-control" value="{{ request('ci') }}">
         </div>
-        <div class="form-group">
+        <div class="form-group mr-2">
             <label for="fecha" class="mr-2">Fecha:</label>
-            <input type="date" name="fecha" id="fecha" class="form-control mr-2" value="{{ request('fecha') }}">
+            <input type="date" name="fecha" id="fecha" class="form-control" value="{{ request('fecha') }}">
         </div>
-        <button type="submit" class="btn btn-primary ">Buscar</button>
+        <button type="submit" class="btn btn-primary">Buscar</button>
     </form>
+
+
 
     <div class="card">
         <div class="card-header">

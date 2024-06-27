@@ -21,8 +21,8 @@ Route::prefix('empleados')->group(function () {
     Route::get('/{empleado}/edit', [EmpleadoController::class, 'edit'])->name('empleados.edit'); // Formulario de edición
     Route::put('/{empleado}', [EmpleadoController::class, 'update'])->name('empleados.update'); // Actualizar empleado
     Route::delete('/{empleado}', [EmpleadoController::class, 'destroy'])->name('empleados.destroy'); // Eliminar empleado
+    Route::get('empleados/{id}', [EmpleadoController::class, 'show'])->name('empleados.show');
     
-    Route::get('/{empleado}/historial', [EmpleadoController::class, 'historial'])->name('empleados.historial');//se va a implementar al final
     Route::get('/getByCI', [EmpleadoController::class, 'getByCI'])->name('empleados.getByCI');
 
 });
